@@ -33,3 +33,12 @@ Click on "Add Cluster" and fill in the following information:
 - JMX port: 7199
 - JMX username: reaperUser
 - JMX password: reaperPass
+
+# Python notebook
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
