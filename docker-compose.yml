@@ -13,14 +13,13 @@ services:
       - cassandra
     ports:
       - "9042:9042"
-      - "7199:7199"
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK1
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 16
+        CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
   cassandra2:
     image: cassandra:4.1.5
@@ -34,14 +33,13 @@ services:
       - cassandra
     ports:
       - "9043:9042"
-      - "7200:7199"
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK2
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 16
+        CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
     depends_on:
       cassandra1:
@@ -58,14 +56,13 @@ services:
       - cassandra
     ports:
       - "9044:9042"
-      - "7201:7199"
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK3
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 16
+        CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
     depends_on:
       cassandra2:
