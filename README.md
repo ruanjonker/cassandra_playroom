@@ -5,10 +5,17 @@ Grafana.
 
 *Reaper is running with the `memory` backend, so it will lose all data when the container is restarted.*
 
+Metrics are collected through the `DataStax MCAC` java agent (injected as a JAR
+on each cassandra node). This must be downloaded as per the instructions further
+down.
+
+Config files for for the different components can be found in the `config`
+directory.
+
 ## References
 
-- [Reaper setup](https://github.com/thelastpickle/cassandra-reaper/blob/master/src/packaging/docker-compose.yml)
-- [DataStax MCAC for metrics](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
+- [Reaper](https://github.com/thelastpickle/cassandra-reaper/tree/master)
+- [DataStax MCAC](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
 
 ## Download & Extract DataStax MCAC Agent for Cassandra Monitoring
 
@@ -34,6 +41,12 @@ docker exec -it cassandra1 nodetool --username cassandraUser --password cassandr
 ```
 
 ## All DataStax MCAC metrics
+
+NOTE: The metrics are filtered to reduce load so that the cluster can run on a
+reasonably spec'ed laptop. If you want to get a list of ALL available metrics,
+comment the filters in
+`config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml` and start the
+`cassandra1` node, wait for it to be up and run the below.
 
 ```bash
 curl http://localhost:9103/metrics -o metrics.txt
