@@ -2,3 +2,4 @@
 /.venv
 /.tool-versions
 /datastax-mcac-agent*
+/metrics.txt

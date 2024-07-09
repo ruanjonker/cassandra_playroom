@@ -36,15 +36,15 @@ LoadPlugin write_prometheus
     Port "9103"
 </Plugin>
 
-#LoadPlugin cpu
-#LoadPlugin df
-#<Plugin df>
-#  FsType "ext3"
-#  FsType "ext4"
-#  FsType "xfs"
-#  FsType "zfs"
-#  IgnoreSelected False
-#</Plugin>
+LoadPlugin cpu
+LoadPlugin df
+<Plugin df>
+  FsType "ext3"
+  FsType "ext4"
+  FsType "xfs"
+  FsType "zfs"
+  IgnoreSelected False
+</Plugin>
 
 #{{^isMac}}
 #LoadPlugin vmem
@@ -56,12 +56,12 @@ LoadPlugin write_prometheus
 #LoadPlugin ethstat
 #{{/isMac}}
 
-#LoadPlugin disk
-#<Plugin "disk">
-#  Disk "/^loop\d+$/"
-#  Disk "/^dm-\d+$/"
-#  IgnoreSelected "true"
-#</Plugin>
+LoadPlugin disk
+<Plugin "disk">
+  Disk "/^loop\d+$/"
+  Disk "/^dm-\d+$/"
+  IgnoreSelected "true"
+</Plugin>
 
 #LoadPlugin interface
 #<Plugin "interface">
@@ -72,10 +72,10 @@ LoadPlugin write_prometheus
 #  IgnoreSelected "true"
 #</Plugin>
 
-#LoadPlugin load
-#LoadPlugin memory
-#LoadPlugin swap
-#LoadPlugin uptime
+LoadPlugin load
+LoadPlugin memory
+LoadPlugin swap
+LoadPlugin uptime
 #LoadPlugin processes
 #LoadPlugin tcpconns
 

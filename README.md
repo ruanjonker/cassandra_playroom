@@ -33,6 +33,12 @@ running the containers.
 docker exec -it cassandra1 nodetool --username cassandraUser --password cassandraPass  status
 ```
 
+## All DataStax MCAC metrics
+
+```bash
+curl http://localhost:9103/metrics -o metrics.txt
+```
+
 ## Reaper
 
 Login to the Reaper [UI](http://localhost:8080/webui/) with username `admin` and password `admin`.
