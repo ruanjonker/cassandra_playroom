@@ -9,7 +9,6 @@ services:
       - ./data/cassandra1:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
     container_name: cassandra1
-    restart: unless-stopped
     hostname: cassandra1
     networks:
       - cassandra
@@ -24,7 +23,14 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
-        JVM_OPTS: "$JVM_OPTS -javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 190s
+      start_interval: 190s
   cassandra2:
     image: cassandra:4.1.5
     volumes:
@@ -33,7 +39,6 @@ services:
       - ./data/cassandra2:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
     container_name: cassandra2
-    restart: unless-stopped
     hostname: cassandra2
     networks:
       - cassandra
@@ -47,10 +52,17 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
-        JVM_OPTS: "$JVM_OPTS -javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 190s
+      start_interval: 190s
     depends_on:
       cassandra1:
-        condition: service_started
+        condition: service_healthy
   cassandra3:
     image: cassandra:4.1.5
     volumes:
@@ -60,7 +72,6 @@ services:
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
     container_name: cassandra3
     hostname: cassandra3
-    restart: unless-stopped
     networks:
       - cassandra
     ports:
@@ -73,10 +84,17 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
-        JVM_OPTS: "$JVM_OPTS -javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 190s
+      start_interval: 190s
     depends_on:
       cassandra2:
-        condition: service_started
+        condition: service_healthy
   reaper:
     image: thelastpickle/cassandra-reaper:latest
     container_name: reaper
@@ -93,7 +111,11 @@ services:
         CRYPTO_SECRET: secret
     depends_on:
       cassandra1:
-        condition: service_started
+        condition: service_healthy
+      cassandra2:
+        condition: service_healthy
+      cassandra3:
+        condition: service_healthy
   prometheus:
     image: "prom/prometheus"
     container_name: prometheus
@@ -103,7 +125,6 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention=14d'
       - '--storage.tsdb.allow-overlapping-blocks'
-      - '--log.level=debug'
     ports:
       - '9090:9090'
     networks:
@@ -112,6 +133,13 @@ services:
       - "./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"
       - "./monitoring/prometheus/tg_mcac.json:/etc/prometheus/tg_mcac.json"
       - "./data/prometheus:/prometheus"
+    depends_on:
+      cassandra1:
+        condition: service_healthy
+      cassandra2:
+        condition: service_healthy
+      cassandra3:
+        condition: service_healthy
   grafana:
     image: grafana/grafana-oss
     container_name: grafana

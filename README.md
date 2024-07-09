@@ -1,16 +1,16 @@
 # Overview
 
-This is a simple example of a Cassandra cluster with Reaper. Reaper is running
-with the `memory` backend, so it will lose all data when the container is
-restarted.
+This is a simple example of a Cassandra cluster with Reaper, Prometheus and
+Grafana.
 
-# References
+*Reaper is running with the `memory` backend, so it will lose all data when the container is restarted.*
 
-- [Reaper in Docker Compose](https://github.com/thelastpickle/cassandra-reaper/blob/master/src/packaging/docker-compose.yml)
+## References
 
-# Monitoring
+- [Reaper setup](https://github.com/thelastpickle/cassandra-reaper/blob/master/src/packaging/docker-compose.yml)
+- [DataStax MCAC for metrics](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
 
-Read here: [Monitoring](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
+## Download & Extract DataStax MCAC Agent for Cassandra Monitoring
 
 ```bash
 curl https://github.com/datastax/metric-collector-for-apache-cassandra/releases/download/v0.3.5/datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz -o datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
@@ -18,13 +18,13 @@ curl https://github.com/datastax/metric-collector-for-apache-cassandra/releases/
 tar -xzf datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
 ```
 
-# Run cluster
+## Run cluster
 
 ```bash
 docker-compose up -d
 ```
 
-# Check node statuses
+## Check node statuses
 
 NOTE: The cluster may take a few minutes to start up, depending on the machine
 running the containers.
@@ -33,7 +33,7 @@ running the containers.
 docker exec -it cassandra1 nodetool --username cassandraUser --password cassandraPass  status
 ```
 
-# Reaper
+## Reaper
 
 Login to the Reaper [UI](http://localhost:8080/webui/) with username `admin` and password `admin`.
 
@@ -44,7 +44,12 @@ Click on "Add Cluster" and fill in the following information:
 - JMX username: reaperUser
 - JMX password: reaperPass
 
-# Python notebook
+## Grafana
+
+Login to the Grafana [UI](http://localhost:3000/) with username `admin` and
+password `admin`.
+
+## Python notebook
 
 ```bash
 python -m venv .venv
