@@ -8,6 +8,16 @@ restarted.
 
 - [Reaper in Docker Compose](https://github.com/thelastpickle/cassandra-reaper/blob/master/src/packaging/docker-compose.yml)
 
+# Monitoring
+
+Read here: [Monitoring](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
+
+```bash
+curl https://github.com/datastax/metric-collector-for-apache-cassandra/releases/download/v0.3.5/datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz -o datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
+
+tar -xzf datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
+```
+
 # Run cluster
 
 ```bash

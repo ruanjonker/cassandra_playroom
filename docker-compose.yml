@@ -7,12 +7,15 @@ services:
       - ./jmxremote.password:/etc/cassandra/jmxremote.password
       - ./jmxremote.password:/etc/cassandra/jmxremote.access
       - ./data/cassandra1:/var/lib/cassandra
+      - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
     container_name: cassandra1
+    restart: unless-stopped
     hostname: cassandra1
     networks:
       - cassandra
     ports:
-      - "9042:9042"
+      - '9042:9042'
+      - '9103:9103'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
@@ -21,18 +24,21 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
+        JVM_OPTS: "$JVM_OPTS -javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
   cassandra2:
     image: cassandra:4.1.5
     volumes:
       - ./jmxremote.password:/etc/cassandra/jmxremote.password
       - ./jmxremote.password:/etc/cassandra/jmxremote.access
       - ./data/cassandra2:/var/lib/cassandra
+      - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
     container_name: cassandra2
+    restart: unless-stopped
     hostname: cassandra2
     networks:
       - cassandra
     ports:
-      - "9043:9042"
+      - '9124:9042'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
@@ -41,6 +47,7 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
+        JVM_OPTS: "$JVM_OPTS -javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
     depends_on:
       cassandra1:
         condition: service_started
@@ -50,12 +57,14 @@ services:
       - ./jmxremote.password:/etc/cassandra/jmxremote.password
       - ./jmxremote.password:/etc/cassandra/jmxremote.access
       - ./data/cassandra3:/var/lib/cassandra
+      - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
     container_name: cassandra3
     hostname: cassandra3
+    restart: unless-stopped
     networks:
       - cassandra
     ports:
-      - "9044:9042"
+      - '9342:9042'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
@@ -64,18 +73,19 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
+        JVM_OPTS: "$JVM_OPTS -javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
     depends_on:
       cassandra2:
         condition: service_started
   reaper:
     image: thelastpickle/cassandra-reaper:latest
     container_name: reaper
+    restart: unless-stopped
     hostname: reaper
     networks:
       - cassandra
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - '8080:8080'
     environment:
         REAPER_JMX_AUTH_USERNAME: reaperUser
         REAPER_JMX_AUTH_PASSWORD: reaperPass
@@ -84,3 +94,42 @@ services:
     depends_on:
       cassandra1:
         condition: service_started
+  prometheus:
+    image: "prom/prometheus"
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=14d'
+      - '--storage.tsdb.allow-overlapping-blocks'
+      - '--log.level=debug'
+    ports:
+      - '9090:9090'
+    networks:
+      - cassandra
+    volumes:
+      - "./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"
+      - "./monitoring/prometheus/tg_mcac.json:/etc/prometheus/tg_mcac.json"
+      - "./data/prometheus:/prometheus"
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    networks:
+      - cassandra
+    environment:
+      GF_INSTALL_PLUGINS: "grafana-polystat-panel"
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+    volumes:
+      - './data/grafana:/var/lib/grafana'
+      - "./monitoring/grafana/prometheus-datasource.yaml:/etc/grafana/provisioning/datasources/prometheus-datasource.yaml"
+      - "./monitoring/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml"
+      - "./monitoring/grafana/dashboards:/var/lib/grafana/dashboards"
+    depends_on:
+      prometheus:
+        condition: service_started
+
