@@ -3,6 +3,7 @@ networks:
 services:
   cassandra1:
     image: cassandra:4.1.5
+    user: root
     volumes:
       - ./.data/cassandra1:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
@@ -31,10 +32,11 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 90s
-      start_interval: 45s
+      start_period: 60s
+      start_interval: 10s
   cassandra2:
     image: cassandra:4.1.5
+    user: root
     volumes:
       - ./.data/cassandra2:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
@@ -62,13 +64,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 90s
-      start_interval: 45s
+      start_period: 60s
+      start_interval: 10s
     depends_on:
       cassandra1:
         condition: service_healthy
   cassandra3:
     image: cassandra:4.1.5
+    user: root
     volumes:
       - ./.data/cassandra3:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
@@ -96,13 +99,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 90s
-      start_interval: 45s
+      start_period: 60s
+      start_interval: 10s
     depends_on:
       cassandra2:
         condition: service_healthy
   reaper:
     image: thelastpickle/cassandra-reaper:latest
+    user: root
     container_name: reaper
     restart: unless-stopped
     hostname: reaper
@@ -124,6 +128,7 @@ services:
         condition: service_healthy
   prometheus:
     image: "prom/prometheus"
+    user: root
     container_name: prometheus
     restart: unless-stopped
     command:
@@ -148,6 +153,7 @@ services:
         condition: service_healthy
   grafana:
     image: grafana/grafana-oss
+    user: root
     container_name: grafana
     restart: unless-stopped
     ports:
