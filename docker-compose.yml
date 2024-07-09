@@ -4,10 +4,12 @@ services:
   cassandra1:
     image: cassandra:4.1.5
     volumes:
-      - ./jmxremote.password:/etc/cassandra/jmxremote.password
-      - ./jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./data/cassandra1:/var/lib/cassandra
+      - ./.data/cassandra1:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
+      - ./config/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
+      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
     container_name: cassandra1
     hostname: cassandra1
     networks:
@@ -21,23 +23,25 @@ services:
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK1
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 8
+        CASSANDRA_NUM_TOKENS: 1
         LOCAL_JMX: "no"
         JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 5
-      start_period: 190s
-      start_interval: 190s
+      start_period: 90s
+      start_interval: 45s
   cassandra2:
     image: cassandra:4.1.5
     volumes:
-      - ./jmxremote.password:/etc/cassandra/jmxremote.password
-      - ./jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./data/cassandra2:/var/lib/cassandra
+      - ./.data/cassandra2:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
+      - ./config/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
+      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
     container_name: cassandra2
     hostname: cassandra2
     networks:
@@ -50,26 +54,28 @@ services:
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK2
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 8
+        CASSANDRA_NUM_TOKENS: 1
         LOCAL_JMX: "no"
         JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 5
-      start_period: 190s
-      start_interval: 190s
+      start_period: 90s
+      start_interval: 45s
     depends_on:
       cassandra1:
         condition: service_healthy
   cassandra3:
     image: cassandra:4.1.5
     volumes:
-      - ./jmxremote.password:/etc/cassandra/jmxremote.password
-      - ./jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./data/cassandra3:/var/lib/cassandra
+      - ./.data/cassandra3:/var/lib/cassandra
       - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
+      - ./config/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
+      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
     container_name: cassandra3
     hostname: cassandra3
     networks:
@@ -82,16 +88,16 @@ services:
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK3
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 8
+        CASSANDRA_NUM_TOKENS: 1
         LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        #JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 5
-      start_period: 190s
-      start_interval: 190s
+      start_period: 90s
+      start_interval: 45s
     depends_on:
       cassandra2:
         condition: service_healthy
@@ -130,9 +136,9 @@ services:
     networks:
       - cassandra
     volumes:
-      - "./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"
-      - "./monitoring/prometheus/tg_mcac.json:/etc/prometheus/tg_mcac.json"
-      - "./data/prometheus:/prometheus"
+      - "./.data/prometheus:/prometheus"
+      - "./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"
+      - "./config/prometheus/tg_mcac.json:/etc/prometheus/tg_mcac.json"
     depends_on:
       cassandra1:
         condition: service_healthy
@@ -149,15 +155,14 @@ services:
     networks:
       - cassandra
     environment:
-      GF_INSTALL_PLUGINS: "grafana-polystat-panel"
+      GF_INSTALL_PLUGINS: 'grafana-polystat-panel'
       GF_SECURITY_ADMIN_PASSWORD: admin
       GF_AUTH_ANONYMOUS_ENABLED: "true"
     volumes:
-      - './data/grafana:/var/lib/grafana'
-      - "./monitoring/grafana/prometheus-datasource.yaml:/etc/grafana/provisioning/datasources/prometheus-datasource.yaml"
-      - "./monitoring/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml"
-      - "./monitoring/grafana/dashboards:/var/lib/grafana/dashboards"
+      - './.data/grafana:/var/lib/grafana'
+      - './config/grafana/prometheus-datasource.yaml:/etc/grafana/provisioning/datasources/prometheus-datasource.yaml'
+      - './config/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml'
+      - './config/grafana/dashboards:/var/lib/grafana/dashboards'
     depends_on:
       prometheus:
         condition: service_started
-

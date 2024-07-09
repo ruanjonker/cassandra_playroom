@@ -13,7 +13,7 @@ Grafana.
 ## Download & Extract DataStax MCAC Agent for Cassandra Monitoring
 
 ```bash
-curl https://github.com/datastax/metric-collector-for-apache-cassandra/releases/download/v0.3.5/datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz -o datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
+curl -L https://github.com/datastax/metric-collector-for-apache-cassandra/releases/download/v0.3.5/datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz -o datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
 
 tar -xzf datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
 ```
