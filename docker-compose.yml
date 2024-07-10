@@ -12,6 +12,7 @@ services:
       - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
       - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/mcac/config/metric-collector.yaml
     container_name: cassandra1
+    cpu_shares: 4
     hostname: cassandra1
     networks:
       - cassandra
@@ -45,6 +46,7 @@ services:
       - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
       - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/mcac/config/metric-collector.yaml
     container_name: cassandra2
+    cpu_shares: 4
     hostname: cassandra2
     networks:
       - cassandra
@@ -80,6 +82,7 @@ services:
       - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
       - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/mcac/config/metric-collector.yaml
     container_name: cassandra3
+    cpu_shares: 4
     hostname: cassandra3
     networks:
       - cassandra
@@ -109,6 +112,7 @@ services:
     user: root
     container_name: reaper
     restart: unless-stopped
+    cpu_shares: 3
     hostname: reaper
     networks:
       - cassandra
@@ -130,6 +134,8 @@ services:
     image: "prom/prometheus"
     user: root
     container_name: prometheus
+    cpu_shares: 2
+    hostname: prometheus
     restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
@@ -155,6 +161,8 @@ services:
     image: grafana/grafana-oss
     user: root
     container_name: grafana
+    cpu_shares: 2
+    hostname: grafana
     restart: unless-stopped
     ports:
       - '3000:3000'
