@@ -28,102 +28,25 @@ metric_sampling_interval_in_seconds: 30
 # Below sample rules allow to extract only a subset of table level metrics and lighten the load
 # for clusters with 100s of tables.
 filtering_rules:
+  #Deny everything
   - policy: deny
     pattern: .*
     scope: global
-  #Table Metrics
+  #Allow cassandra and jvm metrics
   - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.table\.
+    pattern: org\.apache\.cassandra\.metrics\.
     scope: global  
+  - policy: allow
+    pattern: jvm\.
+    scope: global
+  #Deny rules by category
+  #Ignore system tables
   - policy: deny
     pattern: org\.apache\.cassandra\.metrics\.table\.(\w+)\.(system|system_auth|system_distributed|system_traces)
     scope: global  
-  #Keyspace Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.keyspace\.
-    scope: global
+  #Igenore system keyspaces
   - policy: deny
     pattern: org\.apache\.cassandra\.metrics\.keyspace\.(\w+)\.(system|system_auth|system_distributed|system_traces)
-    scope: global
-  #ThreadPool Metrics (one type is repair.task so we just ignore the second part)
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.thread_pools\.
-    scope: global
-  #ClientRequest Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.client_request\.
-    scope: global
-  #Cache Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.cache\.
-    scope: global
-  #CQL Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.cql\.
-    scope: global
-  #Dropped Message Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.dropped_message\.
-    scope: global
-  #Streaming Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.streaming\.
-    scope: global
-  #CommitLog Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.commit_log\.
-    scope: global
-  #Compaction Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.compaction\.
-    scope: global
-  #Storage Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.storage\.
-    scope: global
-  #Batch Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.batch\.
-    scope: global
-  #Client Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.client\.
-    scope: global
-  #BufferPool Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.buffer_pool\.
-    scope: global
-  #Index Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.index\.
-    scope: global
-  #HintService Metrics
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.hinted_hand_off_manager\.
-    scope: global
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.hints_service\.hints_delays\-
-    scope: global
-  # Misc
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.memtable_pool\.
-    scope: global
-  - policy: allow
-    pattern: org\.apache\.cassandra\.metrics\.read_coordination\.
-    scope: global
-  #GC Metrics
-  - policy: allow
-    pattern: jvm\.gc\.
-    scope: global
-  #JVM Metrics
-  - policy: allow
-    pattern: jvm\.memory\.pools\.
-    scope: global
-  - policy: allow
-    pattern: jvm\.fd\.usage
-    scope: global
-  - policy: allow
-    pattern: jvm\.buffers\.
     scope: global
 
 
