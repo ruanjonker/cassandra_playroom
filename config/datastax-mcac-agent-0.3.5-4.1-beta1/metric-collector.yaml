@@ -32,6 +32,10 @@ filtering_rules:
   - policy: deny
     pattern: .*
     scope: global
+  #Allow metrics about cassandra directory sizes
+  - policy: allow
+    pattern: collectd_df
+    scope: global
   #Allow cassandra and jvm metrics
   - policy: allow
     pattern: org\.apache\.cassandra\.metrics\.

@@ -13,7 +13,7 @@ ReadThreads 5
 WriteThreads 5
 WriteQueueLimitHigh 500000
 WriteQueueLimitLow  500000
-CollectInternalStats true
+CollectInternalStats false
 
 LoadPlugin logfile
 <Plugin "logfile">
@@ -36,14 +36,14 @@ LoadPlugin write_prometheus
     Port "9103"
 </Plugin>
 
-LoadPlugin cpu
+#LoadPlugin cpu
 LoadPlugin df
-<Plugin df>
-  FsType "ext3"
-  FsType "ext4"
-  FsType "xfs"
-  FsType "zfs"
-  IgnoreSelected False
+<Plugin "df">
+  MountPoint "/var/lib/cassandra/hints"
+  MountPoint "/var/lib/cassandra/data"
+  MountPoint "/var/lib/cassandra/mcac_data"
+  MountPoint "/var/lib/cassandra/saved_caches"
+  MountPoint "/var/lib/cassandra/commitlog"
 </Plugin>
 
 #{{^isMac}}
@@ -56,12 +56,12 @@ LoadPlugin df
 #LoadPlugin ethstat
 #{{/isMac}}
 
-LoadPlugin disk
-<Plugin "disk">
-  Disk "/^loop\d+$/"
-  Disk "/^dm-\d+$/"
-  IgnoreSelected "true"
-</Plugin>
+#LoadPlugin disk
+#<Plugin "disk">
+#  Disk "/^loop\d+$/"
+#  Disk "/^dm-\d+$/"
+#  IgnoreSelected "true"
+#</Plugin>
 
 #LoadPlugin interface
 #<Plugin "interface">
@@ -72,10 +72,10 @@ LoadPlugin disk
 #  IgnoreSelected "true"
 #</Plugin>
 
-LoadPlugin load
-LoadPlugin memory
-LoadPlugin swap
-LoadPlugin uptime
+#LoadPlugin load
+#LoadPlugin memory
+#LoadPlugin swap
+#LoadPlugin uptime
 #LoadPlugin processes
 #LoadPlugin tcpconns
 
@@ -96,7 +96,6 @@ PreCacheChain "PreCache"
     <Match regex>
       Plugin ".*"                   #Match all
     </Match>
-
     <Target "set">
       MetaData "cluster" "{{cluster}}"
       MetaData "dc" "{{dataCenter}}"
@@ -104,15 +103,14 @@ PreCacheChain "PreCache"
     </Target>
   </Rule>
 
-  <Rule "add_series_tag">
-    <Match regex>
-      Plugin "^(cpu|interfaces|disk)$"
-    </Match>
-
-    <Target "set">
-      MetaData "insight_series" "1"
-    </Target>
-  </Rule>
+  #<Rule "add_series_tag">
+  #  <Match regex>
+  #    Plugin "^(cpu|interfaces|disk)$"
+  #  </Match>
+  #  <Target "set">
+  #    MetaData "insight_series" "1"
+  #  </Target>
+  #</Rule>
 </Chain>
 
 

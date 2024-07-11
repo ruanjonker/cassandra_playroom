@@ -6,8 +6,7 @@ Grafana.
 *Reaper is running with the `memory` backend, so it will lose all data when the container is restarted.*
 
 Metrics are collected through the `DataStax MCAC` java agent (injected as a JAR
-on each cassandra node). This must be downloaded as per the instructions further
-down.
+on each cassandra node).
 
 Config files for for the different components can be found in the `config`
 directory.
@@ -17,18 +16,11 @@ directory.
 - [Reaper](https://github.com/thelastpickle/cassandra-reaper/tree/master)
 - [DataStax MCAC](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
 
-## Download & Extract DataStax MCAC Agent for Cassandra Monitoring
-
-```bash
-curl -L https://github.com/datastax/metric-collector-for-apache-cassandra/releases/download/v0.3.5/datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz -o datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
-
-tar -xzf datastax-mcac-agent-0.3.5-4.1-beta1.tar.gz
-```
-
 ## Run cluster
 
 ```bash
-docker-compose up -d
+docker compose build
+docker compose up -d
 ```
 
 ## Check node statuses
@@ -68,7 +60,7 @@ Click on "Add Cluster" and fill in the following information:
 Login to the Grafana [UI](http://localhost:3000/) with username `admin` and
 password `admin`.
 
-## Python notebook
+## Setup for python notebook
 
 ```bash
 python -m venv .venv

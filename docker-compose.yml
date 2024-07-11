@@ -6,12 +6,17 @@ services:
     build: ./build/cassandra
     user: root
     volumes:
-      - ./.data/cassandra1:/var/lib/cassandra
-      - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
+      # Individual mount points so that we can use collectd to monitor the data directories
+      - ./.data/cassandra1/data:/var/lib/cassandra/data
+      - ./.data/cassandra1/commitlog:/var/lib/cassandra/commitlog
+      - ./.data/cassandra1/saved_caches:/var/lib/cassandra/saved_caches
+      - ./.data/cassandra1/hints:/var/lib/cassandra/hints
+      - ./.data/cassandra1/mcac_data:/var/lib/cassandra/mcac_data
+
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/mcac/config/metric-collector.yaml
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/datastax-mcac-agent/config/collectd.conf.tmpl
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/datastax-mcac-agent/config/metric-collector.yaml
     container_name: cassandra1
     cpu_shares: 4
     hostname: cassandra1
@@ -28,7 +33,7 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 1
         LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/datastax-mcac-agent/lib/datastax-mcac-agent.jar"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
@@ -38,22 +43,27 @@ services:
       start_interval: 10s
   cassandra2:
     image: cassandra:4.1.5-configmods
-    build: ./build/cassandra
     user: root
     volumes:
-      - ./.data/cassandra2:/var/lib/cassandra
-      - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
+      # Individual mount points so that we can use collectd to monitor the data directories
+      - ./.data/cassandra2/data:/var/lib/cassandra/data
+      - ./.data/cassandra2/commitlog:/var/lib/cassandra/commitlog
+      - ./.data/cassandra2/saved_caches:/var/lib/cassandra/saved_caches
+      - ./.data/cassandra2/hints:/var/lib/cassandra/hints
+      - ./.data/cassandra2/mcac_data:/var/lib/cassandra/mcac_data
+
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/mcac/config/metric-collector.yaml
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/datastax-mcac-agent/config/collectd.conf.tmpl
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/datastax-mcac-agent/config/metric-collector.yaml
     container_name: cassandra2
     cpu_shares: 4
     hostname: cassandra2
     networks:
       - cassandra
     ports:
-      - '9124:9042'
+      - '9043:9042'
+      - '9104:9103'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
@@ -62,7 +72,7 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 1
         LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/datastax-mcac-agent/lib/datastax-mcac-agent.jar"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
@@ -78,19 +88,25 @@ services:
     build: ./build/cassandra
     user: root
     volumes:
-      - ./.data/cassandra3:/var/lib/cassandra
-      - ./datastax-mcac-agent-0.3.5-4.1-beta1:/opt/mcac
+      # Individual mount points so that we can use collectd to monitor the data directories
+      - ./.data/cassandra3/data:/var/lib/cassandra/data
+      - ./.data/cassandra3/commitlog:/var/lib/cassandra/commitlog
+      - ./.data/cassandra3/saved_caches:/var/lib/cassandra/saved_caches
+      - ./.data/cassandra3/hints:/var/lib/cassandra/hints
+      - ./.data/cassandra3/mcac_data:/var/lib/cassandra/mcac_data
+      
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/mcac/config/collectd.conf.tmpl
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/mcac/config/metric-collector.yaml
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/datastax-mcac-agent/config/collectd.conf.tmpl
+      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/datastax-mcac-agent/config/metric-collector.yaml
     container_name: cassandra3
     cpu_shares: 4
     hostname: cassandra3
     networks:
       - cassandra
     ports:
-      - '9342:9042'
+      - '9044:9042'
+      - '9105:9103'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
         CASSANDRA_CLUSTER_NAME: MyTestCluster
@@ -99,7 +115,7 @@ services:
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
         CASSANDRA_NUM_TOKENS: 1
         LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/mcac/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/datastax-mcac-agent/lib/datastax-mcac-agent.jar"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
