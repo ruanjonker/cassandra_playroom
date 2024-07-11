@@ -2,7 +2,8 @@ networks:
   cassandra:
 services:
   cassandra1:
-    image: cassandra:4.1.5
+    image: cassandra:4.1.5-configmods
+    build: ./build/cassandra
     user: root
     volumes:
       - ./.data/cassandra1:/var/lib/cassandra
@@ -36,7 +37,8 @@ services:
       start_period: 60s
       start_interval: 10s
   cassandra2:
-    image: cassandra:4.1.5
+    image: cassandra:4.1.5-configmods
+    build: ./build/cassandra
     user: root
     volumes:
       - ./.data/cassandra2:/var/lib/cassandra
@@ -72,7 +74,8 @@ services:
       cassandra1:
         condition: service_healthy
   cassandra3:
-    image: cassandra:4.1.5
+    image: cassandra:4.1.5-configmods
+    build: ./build/cassandra
     user: root
     volumes:
       - ./.data/cassandra3:/var/lib/cassandra
