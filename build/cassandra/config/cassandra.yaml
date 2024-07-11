@@ -8,7 +8,7 @@
 
 # The name of the cluster. This is mainly used to prevent machines in
 # one logical cluster from joining another.
-cluster_name: MyTestCluster
+cluster_name: 'Test Cluster'
 
 # This defines the number of tokens randomly assigned to this node on the ring
 # The more tokens, relative to other nodes, the larger the proportion of data
@@ -24,7 +24,7 @@ cluster_name: MyTestCluster
 # See https://cassandra.apache.org/doc/latest/getting_started/production.html#tokens for
 # best practice information about num_tokens.
 #
-num_tokens: 1
+num_tokens: 16
 
 # Triggers automatic allocation of num_tokens tokens for this node. The allocation
 # algorithm attempts to choose tokens in a way that optimizes replicated load over
@@ -70,7 +70,8 @@ max_hint_window: 3h
 # rate; if there are three, each will throttle to half of the maximum,
 # since we expect two nodes to be delivering hints simultaneously.)
 # Min unit: KiB
-hinted_handoff_throttle: 1024KiB
+# ++RJ++
+hinted_handoff_throttle: 10240KiB
 
 # Number of threads with which to deliver hints;
 # Consider increasing this number when you have multi-dc deployments, since
@@ -555,7 +556,7 @@ seed_provider:
     parameters:
       # seeds is actually a comma-delimited list of addresses.
       # Ex: "<ip1>,<ip2>,<ip3>"
-      - seeds: "cassandra1,cassandra2,cassandra3"
+      - seeds: "127.0.0.1:7000"
 
 # For workloads with more data than can fit in memory, Cassandra's
 # bottleneck will be reads that need to fetch data from
@@ -620,7 +621,8 @@ concurrent_materialized_view_writes: 32
 # Min unit: MiB
 # memtable_heap_space: 2048MiB
 # Min unit: MiB
-# memtable_offheap_space: 2048MiB
+# ++RJ++
+memtable_offheap_space: 1024MiB
 
 # memtable_cleanup_threshold is deprecated. The default calculation
 # is the only reasonable choice. See the comments on  memtable_flush_writers
@@ -646,6 +648,7 @@ concurrent_materialized_view_writes: 32
 #
 # offheap_objects
 #    off heap objects
+# ++RJ++
 memtable_allocation_type: offheap_buffers
 
 # Limit memory usage for Merkle tree calculations during repairs of a certain
@@ -682,7 +685,8 @@ memtable_allocation_type: offheap_buffers
 # For more details see https://issues.apache.org/jira/browse/CASSANDRA-19336.
 #
 # A zero value means no limit.
-# concurrent_merkle_tree_requests: 0
+# ++RJ++
+concurrent_merkle_tree_requests: 1
 
 # Total space to use for commit logs on disk.
 #
@@ -748,7 +752,8 @@ memtable_allocation_type: offheap_buffers
 # is a best-effort process. In extreme conditions Cassandra may need to use
 # more than this amount of memory.
 # Min unit: KiB
-index_summary_capacity:
+# ++RJ++
+index_summary_capacity: 50MiB
 
 # How frequently index summaries should be resampled.  This is done
 # periodically to redistribute memory from the fixed-size pool to sstables
@@ -789,7 +794,7 @@ ssl_storage_port: 7001
 #
 # Setting listen_address to 0.0.0.0 is always wrong.
 #
-listen_address: 172.18.0.2
+listen_address: localhost
 
 # Set listen_address OR listen_interface, not both. Interfaces must correspond
 # to a single address, IP aliasing is not supported.
@@ -803,7 +808,7 @@ listen_address: 172.18.0.2
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-broadcast_address: 172.18.0.2
+# broadcast_address: 1.2.3.4
 
 # When using multiple physical network interfaces, set this
 # to true to listen on broadcast_address in addition to
@@ -885,7 +890,7 @@ native_transport_allow_older_protocols: true
 # set broadcast_rpc_address to a value other than 0.0.0.0.
 #
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-rpc_address: 0.0.0.0
+rpc_address: localhost
 
 # Set rpc_address OR rpc_interface, not both. Interfaces must correspond
 # to a single address, IP aliasing is not supported.
@@ -901,7 +906,7 @@ rpc_address: 0.0.0.0
 # be set to 0.0.0.0. If left blank, this will be set to the value of
 # rpc_address. If rpc_address is set to 0.0.0.0, broadcast_rpc_address must
 # be set.
-broadcast_rpc_address: 172.18.0.2
+# broadcast_rpc_address: 1.2.3.4
 
 # enable or disable keepalive on rpc/native connections
 rpc_keepalive: true
@@ -1300,7 +1305,7 @@ slow_query_log_timeout: 500ms
 #
 # You can use a custom Snitch by setting this to the full class name
 # of the snitch, which will be assumed to be on your classpath.
-endpoint_snitch: GossipingPropertyFileSnitch
+endpoint_snitch: SimpleSnitch
 
 # controls how often to perform the more expensive part of host score
 # calculation
