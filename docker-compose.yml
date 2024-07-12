@@ -142,6 +142,8 @@ services:
       - '--storage.tsdb.allow-overlapping-blocks'
     networks:
       - cassandra
+    ports:
+      - '9090:9090'
     volumes:
       - "./.data/prometheus:/prometheus"
       - "./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"

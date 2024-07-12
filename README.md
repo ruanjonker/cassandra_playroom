@@ -5,7 +5,7 @@ Grafana.
 
 *Reaper is running with the `memory` backend, so it will lose all data when the container is restarted.*
 
-Metrics are collected through the `DataStax MCAC` java agent (injected as a JAR
+Metrics are collected through the `JMX Exporter form Prometheus` java agent (injected as a JAR
 on each cassandra node).
 
 Config files for for the different components can be found in the `config`
@@ -14,7 +14,7 @@ directory.
 ## References
 
 - [Reaper](https://github.com/thelastpickle/cassandra-reaper/tree/master)
-- [JMX Exporter (to Prometheus)](https://github.com/prometheus/jmx_exporter/blob/main/docs/README.md)
+- [JMX Exporter (for Prometheus)](https://github.com/prometheus/jmx_exporter/blob/main/docs/README.md)
 
 ## Run cluster
 
