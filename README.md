@@ -14,7 +14,7 @@ directory.
 ## References
 
 - [Reaper](https://github.com/thelastpickle/cassandra-reaper/tree/master)
-- [DataStax MCAC](https://github.com/datastax/metric-collector-for-apache-cassandra/tree/master)
+- [JMX Exporter (to Prometheus)](https://github.com/prometheus/jmx_exporter/blob/main/docs/README.md)
 
 ## Run cluster
 
@@ -30,18 +30,6 @@ running the containers.
 
 ```bash
 docker exec -it cassandra1 nodetool --username cassandraUser --password cassandraPass  status
-```
-
-## All DataStax MCAC metrics
-
-NOTE: The metrics are filtered to reduce load so that the cluster can run on a
-reasonably spec'ed laptop. If you want to get a list of ALL available metrics,
-comment the filters in
-`config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml` and start the
-`cassandra1` node, wait for it to be up and run the below.
-
-```bash
-curl http://localhost:9103/metrics -o metrics.txt
 ```
 
 ## Reaper

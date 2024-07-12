@@ -6,17 +6,10 @@ services:
     build: ./build/cassandra
     user: root
     volumes:
-      # Individual mount points so that we can use collectd to monitor the data directories
-      - ./.data/cassandra1/data:/var/lib/cassandra/data
-      - ./.data/cassandra1/commitlog:/var/lib/cassandra/commitlog
-      - ./.data/cassandra1/saved_caches:/var/lib/cassandra/saved_caches
-      - ./.data/cassandra1/hints:/var/lib/cassandra/hints
-      - ./.data/cassandra1/mcac_data:/var/lib/cassandra/mcac_data
-
+      - ./.data/cassandra1:/var/lib/cassandra
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/datastax-mcac-agent/config/collectd.conf.tmpl
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/datastax-mcac-agent/config/metric-collector.yaml
+      - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra1
     cpu_shares: 4
     hostname: cassandra1
@@ -31,9 +24,9 @@ services:
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK1
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 1
-        LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/datastax-mcac-agent/lib/datastax-mcac-agent.jar"
+        CASSANDRA_NUM_TOKENS: 8
+        LOCAL_JMX: "yes"
+        JVM_OPTS: "-javaagent:/opt/jmx_prometheus/jmx_prometheus_javaagent-1.0.1.jar=9103:/opt/jmx_prometheus/config.yaml"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
@@ -45,17 +38,10 @@ services:
     image: cassandra:4.1.5-configmods
     user: root
     volumes:
-      # Individual mount points so that we can use collectd to monitor the data directories
-      - ./.data/cassandra2/data:/var/lib/cassandra/data
-      - ./.data/cassandra2/commitlog:/var/lib/cassandra/commitlog
-      - ./.data/cassandra2/saved_caches:/var/lib/cassandra/saved_caches
-      - ./.data/cassandra2/hints:/var/lib/cassandra/hints
-      - ./.data/cassandra2/mcac_data:/var/lib/cassandra/mcac_data
-
+      - ./.data/cassandra2:/var/lib/cassandra
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/datastax-mcac-agent/config/collectd.conf.tmpl
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/datastax-mcac-agent/config/metric-collector.yaml
+      - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra2
     cpu_shares: 4
     hostname: cassandra2
@@ -70,9 +56,9 @@ services:
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK2
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 1
+        CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/datastax-mcac-agent/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/jmx_prometheus/jmx_prometheus_javaagent-1.0.1.jar=9103:/opt/jmx_prometheus/config.yaml"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
@@ -88,17 +74,10 @@ services:
     build: ./build/cassandra
     user: root
     volumes:
-      # Individual mount points so that we can use collectd to monitor the data directories
-      - ./.data/cassandra3/data:/var/lib/cassandra/data
-      - ./.data/cassandra3/commitlog:/var/lib/cassandra/commitlog
-      - ./.data/cassandra3/saved_caches:/var/lib/cassandra/saved_caches
-      - ./.data/cassandra3/hints:/var/lib/cassandra/hints
-      - ./.data/cassandra3/mcac_data:/var/lib/cassandra/mcac_data
-      
+      - ./.data/cassandra3:/var/lib/cassandra
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/collectd.conf.tmpl:/opt/datastax-mcac-agent/config/collectd.conf.tmpl
-      - ./config/datastax-mcac-agent-0.3.5-4.1-beta1/metric-collector.yaml:/opt/datastax-mcac-agent/config/metric-collector.yaml
+      - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra3
     cpu_shares: 4
     hostname: cassandra3
@@ -113,9 +92,9 @@ services:
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK3
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 1
+        CASSANDRA_NUM_TOKENS: 8
         LOCAL_JMX: "no"
-        JVM_OPTS: "-javaagent:/opt/datastax-mcac-agent/lib/datastax-mcac-agent.jar"
+        JVM_OPTS: "-javaagent:/opt/jmx_prometheus/jmx_prometheus_javaagent-1.0.1.jar=9103:/opt/jmx_prometheus/config.yaml"
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
       interval: 30s
@@ -161,14 +140,12 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention=14d'
       - '--storage.tsdb.allow-overlapping-blocks'
-    ports:
-      - '9090:9090'
     networks:
       - cassandra
     volumes:
       - "./.data/prometheus:/prometheus"
       - "./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"
-      - "./config/prometheus/tg_mcac.json:/etc/prometheus/tg_mcac.json"
+      - "./config/prometheus/tg_jmx_prometheus.json:/etc/prometheus/tg_jmx_prometheus.json"
     depends_on:
       cassandra1:
         condition: service_healthy
