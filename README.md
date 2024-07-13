@@ -3,10 +3,10 @@
 This is a simple example of a Cassandra cluster with Reaper, Prometheus and
 Grafana.
 
-*Reaper is running with the `memory` backend, so it will lose all data when the container is restarted.*
+*Reaper is running with the `memory` backend, so it will lose all configuration when the container is restarted.*
 
-Metrics are collected through the `JMX Exporter form Prometheus` java agent (injected as a JAR
-on each cassandra node).
+Metrics are collected through the `JMX Exporter form Prometheus` java agent
+(injected via a JAR on each cassandra node).
 
 Config files for for the different components can be found in the `config`
 directory.
