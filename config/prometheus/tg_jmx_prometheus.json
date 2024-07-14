@@ -1,0 +1,26 @@
+[
+    {
+      "targets": [ 
+        "cassandra1:9103"
+      ],
+      "labels": {
+        "__node__": "cassandra1"
+      }
+    },
+    {
+      "targets": [ 
+        "cassandra2:9103"
+      ],
+      "labels": {
+        "__node__": "cassandra2"
+      }
+    },
+    {
+      "targets": [ 
+        "cassandra3:9103"
+      ],
+      "labels": {
+        "__node__": "cassandra3"
+      }
+    }
+]
