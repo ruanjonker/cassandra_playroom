@@ -1,12 +1,12 @@
 networks:
-  cassandra:
+  cassandra_playroom:
 services:
   cassandra1:
     image: cassandra:4.1.5-configmods
     build: ./build/cassandra
     user: root
     volumes:
-      - ./.data/cassandra1:/var/lib/cassandra
+      - cassandra1:/var/lib/cassandra
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
@@ -14,13 +14,13 @@ services:
     cpu_shares: 4
     hostname: cassandra1
     networks:
-      - cassandra
+      - cassandra_playroom
     ports:
       - '9042:9042'
       - '9103:9103'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
-        CASSANDRA_CLUSTER_NAME: MyTestCluster
+        CASSANDRA_CLUSTER_NAME: CassandraPlayroom
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK1
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
@@ -38,7 +38,7 @@ services:
     image: cassandra:4.1.5-configmods
     user: root
     volumes:
-      - ./.data/cassandra2:/var/lib/cassandra
+      - cassandra2:/var/lib/cassandra
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
@@ -46,13 +46,13 @@ services:
     cpu_shares: 4
     hostname: cassandra2
     networks:
-      - cassandra
+      - cassandra_playroom
     ports:
       - '9043:9042'
       - '9104:9103'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
-        CASSANDRA_CLUSTER_NAME: MyTestCluster
+        CASSANDRA_CLUSTER_NAME: CassandraPlayroom
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK2
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
@@ -74,7 +74,7 @@ services:
     build: ./build/cassandra
     user: root
     volumes:
-      - ./.data/cassandra3:/var/lib/cassandra
+      - cassandra3:/var/lib/cassandra
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
       - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
@@ -82,13 +82,13 @@ services:
     cpu_shares: 4
     hostname: cassandra3
     networks:
-      - cassandra
+      - cassandra_playroom
     ports:
       - '9044:9042'
       - '9105:9103'
     environment:
         CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
-        CASSANDRA_CLUSTER_NAME: MyTestCluster
+        CASSANDRA_CLUSTER_NAME: CassandraPlayroom
         CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK3
         CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
@@ -113,7 +113,7 @@ services:
     cpu_shares: 3
     hostname: reaper
     networks:
-      - cassandra
+      - cassandra_playroom
     ports:
       - '8080:8080'
     environment:
@@ -141,13 +141,13 @@ services:
       - '--storage.tsdb.retention=14d'
       - '--storage.tsdb.allow-overlapping-blocks'
     networks:
-      - cassandra
+      - cassandra_playroom
     ports:
       - '9090:9090'
     volumes:
-      - "./.data/prometheus:/prometheus"
-      - "./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml"
-      - "./config/prometheus/tg_jmx_prometheus.json:/etc/prometheus/tg_jmx_prometheus.json"
+      - prometheus:/prometheus
+      - ./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./config/prometheus/tg_jmx_prometheus.json:/etc/prometheus/tg_jmx_prometheus.json
     depends_on:
       cassandra1:
         condition: service_healthy
@@ -165,16 +165,22 @@ services:
     ports:
       - '3000:3000'
     networks:
-      - cassandra
+      - cassandra_playroom
     environment:
       GF_INSTALL_PLUGINS: 'grafana-polystat-panel'
       GF_SECURITY_ADMIN_PASSWORD: admin
       GF_AUTH_ANONYMOUS_ENABLED: "true"
     volumes:
-      - './.data/grafana:/var/lib/grafana'
+      - grafana:/var/lib/grafana
       - './config/grafana/prometheus-datasource.yaml:/etc/grafana/provisioning/datasources/prometheus-datasource.yaml'
       - './config/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml'
       - './config/grafana/dashboards:/var/lib/grafana/dashboards'
     depends_on:
       prometheus:
         condition: service_started
+volumes:
+  cassandra1:
+  cassandra2:
+  cassandra3:
+  prometheus:
+  grafana:
