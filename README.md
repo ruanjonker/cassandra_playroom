@@ -4,8 +4,6 @@ This is a simple setup of a Cassandra cluster with Reaper, Prometheus
 and Grafana. The purpose of this project is for those who want to familiarize
 themselves with Apache Cassandra.
 
-_Reaper is running with the `memory` backend, so it will lose all configuration when the container is restarted._
-
 Metrics are collected through the `JMX Exporter form Prometheus` java agent
 (injected via a JAR on each cassandra node).
 
