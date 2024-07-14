@@ -109,7 +109,7 @@ services:
     image: thelastpickle/cassandra-reaper:latest
     user: root
     volumes:
-      - ./config/reaper/cassandra-reaper.yaml:/etc/cassandra-reaper/cassandra-reaper.yaml
+      - ./config/reaper/cassandra-reaper.yaml:/etc/cassandra-reaper/cassandra-reaper.yml
     container_name: reaper
     restart: unless-stopped
     cpu_shares: 3
@@ -118,6 +118,7 @@ services:
       - cassandra_playroom
     ports:
       - '8080:8080'
+      - '8081:8081'
     environment:
         REAPER_JMX_AUTH_USERNAME: reaperUser
         REAPER_JMX_AUTH_PASSWORD: reaperPass
@@ -150,6 +151,7 @@ services:
       - prometheus:/prometheus
       - ./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
       - ./config/prometheus/tg_jmx_prometheus.json:/etc/prometheus/tg_jmx_prometheus.json
+      - ./config/prometheus/tg_reaper.json:/etc/prometheus/tg_reaper.json
     depends_on:
       cassandra1:
         condition: service_healthy
