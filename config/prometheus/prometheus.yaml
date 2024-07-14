@@ -8,4 +8,10 @@ scrape_configs:
     honor_labels: true
     file_sd_configs:
       - files:
-        - 'tg_jmx_prometheus.json'
+          - "tg_jmx_prometheus.json"
+  - job_name: "reaper"
+    honor_labels: true
+    metrics_path: /prometheusMetrics
+    file_sd_configs:
+      - files:
+          - "tg_reaper.json"
