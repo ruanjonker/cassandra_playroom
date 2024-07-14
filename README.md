@@ -1,9 +1,10 @@
-# Overview
+# Cassandra Playroom Overview
 
-This is a simple example of a Cassandra cluster with Reaper, Prometheus and
-Grafana.
+This is a simple setup of a Cassandra cluster with Reaper, Prometheus
+and Grafana. The purpose of this project is for those who want to familiarize
+themselves with Apache Cassandra.
 
-*Reaper is running with the `memory` backend, so it will lose all configuration when the container is restarted.*
+_Reaper is running with the `memory` backend, so it will lose all configuration when the container is restarted._
 
 Metrics are collected through the `JMX Exporter form Prometheus` java agent
 (injected via a JAR on each cassandra node).
@@ -13,8 +14,11 @@ directory.
 
 ## References
 
+- [Cassandra](https://cassandra.apache.org/doc/4.1/index.html)
 - [Reaper](https://github.com/thelastpickle/cassandra-reaper/tree/master)
 - [JMX Exporter (for Prometheus)](https://github.com/prometheus/jmx_exporter/blob/main/docs/README.md)
+- [Prometheus](https://prometheus.io/)
+- [Grafana](https://grafana.com/)
 
 ## Run cluster
 
@@ -34,7 +38,7 @@ docker exec -it cassandra1 nodetool --username cassandraUser --password cassandr
 
 ## Reaper
 
-Login to the Reaper [UI](http://localhost:8080/webui/) with username `admin` and password `admin`.
+Login to the [Reaper UI](http://localhost:8080/webui/) with username `admin` and password `admin`.
 
 Click on "Add Cluster" and fill in the following information:
 
@@ -43,9 +47,13 @@ Click on "Add Cluster" and fill in the following information:
 - JMX username: reaperUser
 - JMX password: reaperPass
 
+## Prometheus
+
+You can connect to [prometheus using this link](http://localhost:9090/)
+
 ## Grafana
 
-Login to the Grafana [UI](http://localhost:3000/) with username `admin` and
+Login to the [Grafana UI](http://localhost:3000/) with username `admin` and
 password `admin`.
 
 ## Setup for python notebook
