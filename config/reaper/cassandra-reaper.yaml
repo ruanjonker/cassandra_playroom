@@ -22,7 +22,8 @@ repairIntensity: 0.9
 scheduleDaysBetween: 7
 repairRunThreadCount: 15
 hangingRepairTimeoutMins: 30
-storageType: cassandra
+#storageType: cassandra
+storageType: memory
 enableCrossOrigin: true
 incrementalRepair: false
 blacklistTwcsTables: true
