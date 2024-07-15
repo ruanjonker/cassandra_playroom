@@ -34,6 +34,7 @@ services:
       retries: 5
       start_period: 60s
       start_interval: 10s
+    restart: unless-stopped
   cassandra2:
     image: cassandra:4.1.5-configmods
     user: root
@@ -66,6 +67,7 @@ services:
       retries: 5
       start_period: 60s
       start_interval: 10s
+    restart: unless-stopped
     depends_on:
       cassandra1:
         condition: service_healthy
@@ -102,6 +104,7 @@ services:
       retries: 5
       start_period: 60s
       start_interval: 10s
+    restart: unless-stopped
     depends_on:
       cassandra2:
         condition: service_healthy
@@ -109,6 +112,7 @@ services:
     image: thelastpickle/cassandra-reaper:latest
     user: root
     volumes:
+      - reaper:/var/log/cassandra-reaper
       - ./config/reaper/cassandra-reaper.yaml:/etc/cassandra-reaper/cassandra-reaper.yml
     container_name: reaper
     restart: unless-stopped
@@ -188,3 +192,4 @@ volumes:
   cassandra3:
   prometheus:
   grafana:
+  reaper:
