@@ -1,8 +1,18 @@
 # Cassandra Playroom Overview
 
 This is a simple setup of a Cassandra cluster with Reaper, Prometheus
-and Grafana. The purpose of this project is for those who want to familiarize
-themselves with Apache Cassandra.
+and Grafana running in [Docker](https://www.docker.com/) The purpose
+of this project is to provide a "playroom" for those who want to
+familiarize themselves with Apache Cassandra.
+
+This project also has a jupyter notebook (`cassandra.ipynb`) that
+has some examples of how to interact with cassandra.
+
+You'll need docker preinstalled and you'll need at least 12GB of ram
+that can be dedicated to the docker containers - if one of the
+cassandra nodes unexpectedly dies, then it is probably because the
+docker deamon OOM killed it, it should automatically be restarted
+by the docker daemon (specified in `docker-compose.yml`).
 
 Metrics are collected through the `JMX Exporter form Prometheus` java agent
 (injected via a JAR on each cassandra node).
