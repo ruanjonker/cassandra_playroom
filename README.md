@@ -41,7 +41,7 @@ NOTE: The cluster may take a few minutes to start up, depending on the machine
 running the containers.
 
 ```bash
-docker exec -it cassandra1 nodetool --username cassandraUser --password cassandraPass  status
+docker exec -it -e JVM_OPTS="" cassandra1 nodetool status
 ```
 
 ## Reaper
@@ -51,9 +51,6 @@ Login to the [Reaper UI](http://localhost:8080/webui/) with username `admin` and
 Click on "Add Cluster" and fill in the following information:
 
 - Seed node: cassandra1
-- JMX port: 7199
-- JMX username: reaperUser
-- JMX password: reaperPass
 
 ## Prometheus
 
@@ -71,4 +68,33 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
+
+## Running the stress tool
+
+Even though it does not make a lot of sense to stress test cassandra
+in this "playroom" context, below you can find an example of how to run
+the `cassandra-stress` tool.
+
+**NOTE:** The `-e JVM_OPTS=""` is needed because the tool use the same
+initialization scripts as what cassandra does and in the
+`docker-compose.yml` we've injected the the `jmx_prometheus` javaagent
+to export metrics.
+
+```bash
+# Writes only
+docker exec -e JVM_OPTS="" -ti cassandra1 /opt/cassandra/tools/bin/cassandra-stress user profile=/etc/cassandra/stress/simple-stress.yaml ops\(insert=1\) -rate threads=1 -graph file=/tmp/stress.insert.html
+# Copy the generated graph & report
+docker cp cassandra1:/tmp/stress.insert.html stress.insert.html
+
+# Reads only
+docker exec -e JVM_OPTS="" -ti cassandra1 /opt/cassandra/tools/bin/cassandra-stress user profile=/etc/cassandra/stress/simple-stress.yaml ops\(simple1=1\) -rate threads=1 -graph file=/tmp/stress.read.html
+# Copy the generated graph & report
+docker cp cassandra1:/tmp/stress.read.html stress.read.html
+
+# 10% Write and 90% Read
+docker exec -e JVM_OPTS="" -ti cassandra1 /opt/cassandra/tools/bin/cassandra-stress user profile=/etc/cassandra/stress/simple-stress.yaml ops\(insert=1,simple1=9\) -rate threads=1 -graph file=/tmp/stress.rw.html
+# Copy the generated graph & report
+docker cp cassandra1:/tmp/stress.rw.html stress.rw.html
+
 ```
