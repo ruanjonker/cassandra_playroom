@@ -218,6 +218,11 @@ if [ "x$LOCAL_JMX" = "x" ]; then
     LOCAL_JMX=yes
 fi
 
+#++RJ++ JMX_AUTH configurable - expects true or false
+if [ "x$JMX_AUTH" = "x" ]; then
+    JMX_AUTH=true
+fi
+
 # Specifies the default port over which Cassandra will be available for
 # JMX connections.
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
@@ -225,18 +230,16 @@ JMX_PORT="7199"
 
 if [ "$LOCAL_JMX" = "yes" ]; then
   JVM_OPTS="$JVM_OPTS -Dcassandra.jmx.local.port=$JMX_PORT"
-  JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
+  JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=$JMX_AUTH"
 else
   JVM_OPTS="$JVM_OPTS -Dcassandra.jmx.remote.port=$JMX_PORT"
   # if ssl is enabled the same port cannot be used for both jmx and rmi so either
   # pick another value for this property or comment out to use a random port (though see CASSANDRA-7087 for origins)
-  
   #++RJ++ JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.rmi.port=$JMX_PORT"
 
   # turn on JMX authentication. See below for further options
-  # JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=true"
-  # ++RJ++
-  JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
+  #++RJ++ JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=true"
+  JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=$JMX_AUTH"
 
   # jmx ssl options
   #JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.ssl=true"
