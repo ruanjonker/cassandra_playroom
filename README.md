@@ -8,11 +8,13 @@ familiarize themselves with Apache Cassandra.
 This project also has a jupyter notebook (`cassandra.ipynb`) that
 has some examples of how to interact with cassandra.
 
-You'll need docker preinstalled and you'll need at least 12GB of ram
-that can be dedicated to the docker containers - if one of the
+You'll need docker preinstalled and you'll need at least `6GB` of
+ram that can be dedicated to the docker containers - if one of the
 cassandra nodes unexpectedly dies, then it is probably because the
 docker deamon OOM killed it, it should automatically be restarted
-by the docker daemon (specified in `docker-compose.yml`).
+by the docker daemon (specified in `docker-compose.yml`). You can
+adjust the amount of ram used by cassandra changing `MAX_HEAP_SIZE`
+and `NEW_HEAPSIZE` in the `docker-compose.yml` file.
 
 Metrics are collected through the `JMX Exporter form Prometheus` java agent
 (injected via a JAR on each cassandra node).
