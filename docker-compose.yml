@@ -13,112 +13,50 @@ services:
     volumes:
       - tools:/reports
   cassandra1:
-    image: cassandra:4.1.5-configmods
-    build: ./build/cassandra
+    extends:
+      file: compose/cassandra-common.yml
+      service: cassandra
     volumes:
       - cassandra1:/var/lib/cassandra
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra1
-    cpu_shares: 4
-    mem_limit: 900m
     hostname: cassandra1
-    networks:
-      - cassandra_playroom
     ports:
       - '9042:9042'
       - '9103:9103'
     environment:
-        CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
-        CASSANDRA_CLUSTER_NAME: CassandraPlayroom
-        CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK1
-        CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 8
-        MAX_HEAP_SIZE: 300M
-        HEAP_NEWSIZE: 50M
-        LOCAL_JMX: "no"
-        JMX_AUTH: "false"
-        JVM_OPTS: "-javaagent:/opt/jmx_prometheus/jmx_prometheus_javaagent-1.0.1.jar=9103:/opt/jmx_prometheus/config.yaml"
-    healthcheck:
-      test: ["CMD", "cqlsh", "-e", "CREATE KEYSPACE IF NOT EXISTS reaper_db WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 3};"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-      start_interval: 10s
-    restart: unless-stopped
   cassandra2:
-    image: cassandra:4.1.5-configmods
+    extends:
+      file: compose/cassandra-common.yml
+      service: cassandra
     volumes:
       - cassandra2:/var/lib/cassandra
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra2
-    cpu_shares: 4
-    mem_limit: 900m
     hostname: cassandra2
-    networks:
-      - cassandra_playroom
     ports:
       - '9043:9042'
       - '9104:9103'
     environment:
-        CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
-        CASSANDRA_CLUSTER_NAME: CassandraPlayroom
-        CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK2
-        CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 8
-        MAX_HEAP_SIZE: 300M
-        HEAP_NEWSIZE: 50M
-        LOCAL_JMX: "no"
-        JMX_AUTH: "false"
-        JVM_OPTS: "-javaagent:/opt/jmx_prometheus/jmx_prometheus_javaagent-1.0.1.jar=9103:/opt/jmx_prometheus/config.yaml"
-    healthcheck:
-      test: ["CMD", "cqlsh", "-e", "CREATE KEYSPACE IF NOT EXISTS reaper_db WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 3};"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-      start_interval: 10s
-    restart: unless-stopped
     depends_on:
       cassandra1:
         condition: service_healthy
   cassandra3:
-    image: cassandra:4.1.5-configmods
-    build: ./build/cassandra
+    extends:
+      file: compose/cassandra-common.yml
+      service: cassandra
     volumes:
       - cassandra3:/var/lib/cassandra
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra3
-    cpu_shares: 4
-    mem_limit: 900m
     hostname: cassandra3
-    networks:
-      - cassandra_playroom
     ports:
       - '9044:9042'
       - '9105:9103'
     environment:
-        CASSANDRA_SEEDS: "cassandra1,cassandra2,cassandra3"
-        CASSANDRA_CLUSTER_NAME: CassandraPlayroom
-        CASSANDRA_DC: DC1
         CASSANDRA_RACK: RACK3
-        CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-        CASSANDRA_NUM_TOKENS: 8
-        MAX_HEAP_SIZE: 300M
-        HEAP_NEWSIZE: 50M
-        LOCAL_JMX: "no"
-        JMX_AUTH: "false"
-        JVM_OPTS: "-javaagent:/opt/jmx_prometheus/jmx_prometheus_javaagent-1.0.1.jar=9103:/opt/jmx_prometheus/config.yaml"
-    healthcheck:
-      test: ["CMD", "cqlsh", "-e", "CREATE KEYSPACE IF NOT EXISTS reaper_db WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 3};"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-      start_interval: 10s
-    restart: unless-stopped
     depends_on:
       cassandra2:
         condition: service_healthy
