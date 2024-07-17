@@ -1,0 +1,19 @@
+services:
+  cassandra:
+    image: cassandra:4.1.5-configmods
+    build: ../build/cassandra
+    cpu_shares: 4
+    mem_limit: 900m
+    networks:
+      - cassandra_playroom
+    env_file:
+      - path: ../config/cassandra/.env
+        required: true
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "CREATE KEYSPACE IF NOT EXISTS reaper_db WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 3};"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+      start_interval: 10s
+    restart: unless-stopped

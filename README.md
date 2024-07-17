@@ -43,7 +43,9 @@ NOTE: The cluster may take a few minutes to start up, depending on the machine
 running the containers.
 
 ```bash
-docker exec -it -e JVM_OPTS="" cassandra1 nodetool status
+docker exec -it tools nodetool -h cassandra1 status
+docker exec -it tools nodetool -h cassandra2 status
+docker exec -it tools nodetool -h cassandra3 status
 ```
 
 ## Reaper
@@ -78,25 +80,16 @@ Even though it does not make a lot of sense to stress test cassandra
 in this "playroom" context, below you can find an example of how to run
 the `cassandra-stress` tool.
 
-**NOTE:** The `-e JVM_OPTS=""` is needed because the tool use the same
-initialization scripts as what cassandra does and in the
-`docker-compose.yml` we've injected the `jmx_prometheus` javaagent
-to export metrics.
-
 ```bash
 # Writes only
-docker exec -e JVM_OPTS="" -ti cassandra1 /opt/cassandra/tools/bin/cassandra-stress user profile=/etc/cassandra/stress/simple-stress.yaml ops\(insert=1\) -rate threads=8 -graph file=/tmp/stress.insert.html revision=run1
-# Copy the generated graph & report
-docker cp cassandra1:/tmp/stress.insert.html stress.insert.html
+docker exec -ti tools cassandra-stress user profile=/profiles/simple-stress.yaml ops\(insert=1\) -node cassandra1,cassandra2,cassandra3 -rate threads=8 -graph file=/reports/stress.html title=PlayroomStress revision=insert_run1
 
 # Reads only
-docker exec -e JVM_OPTS="" -ti cassandra1 /opt/cassandra/tools/bin/cassandra-stress user profile=/etc/cassandra/stress/simple-stress.yaml ops\(simple1=1\) -rate threads=8 -graph file=/tmp/stress.read.html revision=run1
-# Copy the generated graph & report
-docker cp cassandra1:/tmp/stress.read.html stress.read.html
+docker exec -ti tools cassandra-stress user profile=/profiles/simple-stress.yaml ops\(simple1=1\) -node cassandra1,cassandra2,cassandra3 -rate threads=8 -graph file=/reports/stress.html title=PlayroomStress revision=read_run1
 
 # 10% Write and 90% Read
-docker exec -e JVM_OPTS="" -ti cassandra1 /opt/cassandra/tools/bin/cassandra-stress user profile=/etc/cassandra/stress/simple-stress.yaml ops\(insert=1,simple1=9\) -rate threads=8 -graph file=/tmp/stress.rw.html revision=run1
-# Copy the generated graph & report
-docker cp cassandra1:/tmp/stress.rw.html stress.rw.html
+docker exec -ti tools cassandra-stress user profile=/profiles/simple-stress.yaml ops\(insert=1,simple1=9\) -node cassandra1,cassandra2,cassandra3 -rate threads=8 -graph file=/reports/stress.html title=PlayroomStress revision=rw_run1
 
+# Copy the generated graph & report
+docker cp tools:/reports/stress.html stress.html
 ```
