@@ -1,4 +1,4 @@
-FROM cassandra:4.1.5
+FROM cassandra:5.0-beta1
 
 COPY config/loop.sh /opt/loop.sh
 RUN chmod a+rx /opt/loop.sh
