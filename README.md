@@ -88,7 +88,7 @@ docker exec -ti tools cassandra-stress user profile=/profiles/simple-stress.yaml
 docker exec -ti tools cassandra-stress user profile=/profiles/simple-stress.yaml ops\(simple1=1\) -node cassandra1,cassandra2,cassandra3 -rate threads=8 -graph file=/tmp/stress.html title=PlayroomStress revision=read_run1
 
 # 10% Write and 90% Read
-docker exec -ti tools /opt/cassandra/tools/bin/cassandra-stress user profile=/profiles/simple-stress.yaml ops\(insert=1,simple1=9\) -node cassandra1,cassandra2,cassandra3 -rate threads=8 -graph file=/reports/stress.html title=PlayroomStress revision=rw_run1
+docker exec -ti tools cassandra-stress user profile=/profiles/simple-stress.yaml ops\(insert=1,simple1=9\) -node cassandra1,cassandra2,cassandra3 -rate threads=8 -graph file=/reports/stress.html title=PlayroomStress revision=rw_run1
 
 # Copy the generated graph & report
 docker cp tools:/reports/stress.html stress.html
