@@ -1,18 +1,26 @@
 networks:
   cassandra_playroom:
 services:
+  tools:
+    image: cassandra:4.1.5-tools
+    build: ./build/tools
+    mem_limit: 350m
+    cpu_shares: 4
+    container_name: tools
+    hostname: tools
+    networks:
+      - cassandra_playroom
+    volumes:
+      - tools:/reports
   cassandra1:
     image: cassandra:4.1.5-configmods
     build: ./build/cassandra
-    user: root
     volumes:
       - cassandra1:/var/lib/cassandra
-      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
-      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/cassandra/stress:/etc/cassandra/stress
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra1
     cpu_shares: 4
+    mem_limit: 900m
     hostname: cassandra1
     networks:
       - cassandra_playroom
@@ -41,15 +49,12 @@ services:
     restart: unless-stopped
   cassandra2:
     image: cassandra:4.1.5-configmods
-    user: root
     volumes:
       - cassandra2:/var/lib/cassandra
-      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
-      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/cassandra/stress:/etc/cassandra/stress
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra2
     cpu_shares: 4
+    mem_limit: 900m
     hostname: cassandra2
     networks:
       - cassandra_playroom
@@ -82,15 +87,12 @@ services:
   cassandra3:
     image: cassandra:4.1.5-configmods
     build: ./build/cassandra
-    user: root
     volumes:
       - cassandra3:/var/lib/cassandra
-      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.password
-      - ./config/cassandra/jmxremote.password:/etc/cassandra/jmxremote.access
-      - ./config/cassandra/stress:/etc/cassandra/stress
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
     container_name: cassandra3
     cpu_shares: 4
+    mem_limit: 900m
     hostname: cassandra3
     networks:
       - cassandra_playroom
@@ -122,13 +124,13 @@ services:
         condition: service_healthy
   reaper:
     image: thelastpickle/cassandra-reaper:latest
-    user: root
     volumes:
       - reaper:/var/log/cassandra-reaper
       - ./config/reaper/cassandra-reaper.yaml:/etc/cassandra-reaper/cassandra-reaper.yml
     container_name: reaper
     restart: unless-stopped
     cpu_shares: 3
+    mem_limit: 250m
     hostname: reaper
     networks:
       - cassandra_playroom
@@ -149,9 +151,9 @@ services:
         condition: service_healthy
   prometheus:
     image: "prom/prometheus"
-    user: root
     container_name: prometheus
     cpu_shares: 2
+    mem_limit: 250m
     hostname: prometheus
     restart: unless-stopped
     command:
@@ -177,9 +179,9 @@ services:
         condition: service_healthy
   grafana:
     image: grafana/grafana-oss
-    user: root
     container_name: grafana
     cpu_shares: 2
+    mem_limit: 250m
     hostname: grafana
     restart: unless-stopped
     ports:
@@ -205,3 +207,4 @@ volumes:
   prometheus:
   grafana:
   reaper:
+  tools:
