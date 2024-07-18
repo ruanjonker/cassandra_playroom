@@ -12,6 +12,14 @@ services:
       - cassandra_playroom
     volumes:
       - tools:/reports
+    healthcheck:
+      test: ["CMD", "echo", "Cassandra Tools Container"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+      start_period: 10s
+      start_interval: 1s
+    restart: unless-stopped
   cassandra1:
     extends:
       file: compose/cassandra-common.yml
@@ -26,6 +34,9 @@ services:
       - '9103:9103'
     environment:
         CASSANDRA_RACK: RACK1
+    depends_on:
+      tools:
+        condition: service_healthy
   cassandra2:
     extends:
       file: compose/cassandra-common.yml
@@ -59,6 +70,28 @@ services:
         CASSANDRA_RACK: RACK3
     depends_on:
       cassandra2:
+        condition: service_healthy
+  neo4j:
+    image: neo4j:enterprise
+    container_name: neo4j
+    hostname: neo4j
+    cpu_shares: 3
+    mem_limit: 800m
+    ports:
+      - '7474:7474'
+      - '7687:7687'
+    networks:
+      - cassandra_playroom
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: eval
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_dbms_security_procedures_whitelist: apoc.*
+      NEO4J_dbms_security_procedures_allowlist: apoc.*
+    volumes:
+      - neo4j:/data
+    depends_on:
+      cassandra3:
         condition: service_healthy
   reaper:
     image: thelastpickle/cassandra-reaper:latest
@@ -146,3 +179,4 @@ volumes:
   grafana:
   reaper:
   tools:
+  neo4j:
