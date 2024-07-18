@@ -27,6 +27,7 @@ services:
     volumes:
       - cassandra1:/var/lib/cassandra
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
+      - ./config/medusa/medusa.ini:/etc/medusa/medusa.ini
     container_name: cassandra1
     hostname: cassandra1
     ports:
@@ -44,6 +45,7 @@ services:
     volumes:
       - cassandra2:/var/lib/cassandra
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
+      - ./config/medusa/medusa.ini:/etc/medusa/medusa.ini
     container_name: cassandra2
     hostname: cassandra2
     ports:
@@ -61,6 +63,7 @@ services:
     volumes:
       - cassandra3:/var/lib/cassandra
       - ./config/jmx_prometheus/config.yaml:/opt/jmx_prometheus/config.yaml
+      - ./config/medusa/medusa.ini:/etc/medusa/medusa.ini
     container_name: cassandra3
     hostname: cassandra3
     ports:
