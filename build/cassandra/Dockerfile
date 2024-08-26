@@ -1,4 +1,4 @@
-FROM cassandra:5.0-beta1
+FROM cassandra:5.0-rc1
 
 # Copy the configuration file, all custom configs are tagged with ++RJ++
 RUN mv /etc/cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml.orig
