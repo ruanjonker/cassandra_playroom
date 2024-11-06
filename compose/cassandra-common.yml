@@ -1,6 +1,6 @@
 services:
   cassandra:
-    image: cassandra:4.1.5-configmods
+    image: cassandra:5.0.2-configmods
     build: ../build/cassandra
     cpu_shares: 4
     mem_limit: 900m
