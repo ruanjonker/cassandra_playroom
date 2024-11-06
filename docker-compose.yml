@@ -2,7 +2,7 @@ networks:
   cassandra_playroom:
 services:
   tools:
-    image: cassandra:4.1.5-tools
+    image: cassandra:5.0.2-tools
     build: ./build/tools
     mem_limit: 350m
     cpu_shares: 4
